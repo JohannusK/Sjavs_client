@@ -11,6 +11,8 @@ cmd_queue = queue.Queue()  # Queue to hold commands
 
 myname = "Trondur"
 playerId = -1
+keep_running = True  # Control flag for threads
+
 
 def send(tosend):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -20,7 +22,8 @@ def send(tosend):
 
 
 def get_updates():
-    while True:
+    global keep_running
+    while keep_running:
         # Check if there are commands in the queue to send
         try:
             tosend = cmd_queue.get_nowait()
@@ -33,7 +36,8 @@ def get_updates():
 
 
 def handle_user_input():
-    while True:
+    global keep_running
+    while keep_running:
         user_input = input()
         cmd_queue.put(user_input)
         if user_input.lower() == 'exit':
@@ -54,4 +58,8 @@ if response[0] == 'P':
     playerId = response[1]
     update_thread = threading.Thread(target=get_updates)
     update_thread.start()
+else:
+    print("😭")
+    keep_running = False
+
 
