@@ -2,6 +2,7 @@ import socket
 import time
 import threading
 import queue
+import sys
 
 
 HOST = "127.0.0.1"  # The server's hostname or IP address
@@ -29,8 +30,8 @@ def get_updates():
             tosend = cmd_queue.get_nowait()
         except queue.Empty:
             tosend = f"GU{playerId}"  # Default message to get updates
-        response = send(tosend)
-        if response != "W":
+        response = send(f"P{playerId} {tosend}")
+        if response != "No new updates.":
             print(response)
         time.sleep(1)  # Polling interval
 
@@ -44,22 +45,26 @@ def handle_user_input():
             break
 
 
-# Start user input handling in a separate thread
-input_thread = threading.Thread(target=handle_user_input)
-input_thread.start()
+if __name__ == "__main__":
+    print(sys.argv)
+    if len(sys.argv) > 1:
+        myname = sys.argv[1]
+    # Start user input handling in a separate thread
+    input_thread = threading.Thread(target=handle_user_input)
+    input_thread.start()
 
-response = send(f'Hallo, Eg eri {myname}')
-print(f"Received {response}")
+    response = send(f'Hallo, Eg eri {myname}')
+    print(f"Received {response}")
 
-print(response[0])
-if response[0] == 'P':
-    print('yey!')
-    time.sleep(0.5)
-    playerId = response[1]
-    update_thread = threading.Thread(target=get_updates)
-    update_thread.start()
-else:
-    print("😭")
-    keep_running = False
+    print(response[0])
+    if response[0] == 'P':
+        print('yey!')
+        time.sleep(0.5)
+        playerId = response[1]
+        update_thread = threading.Thread(target=get_updates)
+        update_thread.start()
+    else:
+        print("😭")
+        keep_running = False
 
 
