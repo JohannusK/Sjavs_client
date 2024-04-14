@@ -3,7 +3,7 @@ import time
 import threading
 import queue
 import sys
-
+from cards import show_my_cards
 
 HOST = "127.0.0.1"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
@@ -32,8 +32,12 @@ def get_updates():
             tosend = f"GU{playerId}"  # Default message to get updates
         response = send(f"P{playerId} {tosend}")
         if response != "No new updates.":
-            print(response)
-        time.sleep(1)  # Polling interval
+            if 'hand: ' in response:
+                tmp = show_my_cards(response)
+                print(tmp)
+            else:
+                print(response)
+        time.sleep(0.1)  # Polling interval
 
 
 def handle_user_input():
