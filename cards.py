@@ -78,7 +78,7 @@ def make_table(size_x: int, size_y: int):
     return output
 
 def make_draw_area(size_x: int, size_y: int):
-   return ("x" * size_x + "\n") * size_y
+   return ("." * size_x + "\n") * size_y
 
 #print(make_full_size_card("TD"))
 #print(make_full_size_card("9C"))
@@ -99,18 +99,18 @@ def place(what: str, on_where: str, where_x: int, where_y: int) -> str:
 
     # Replace the specified area in `on_where` with `what`
     for i in range(num_lines):
-        if i + where_x >= len(lines):
+        if i + where_y >= len(lines):
             # If `what` extends beyond the number of lines in `on_where`, stop.
             break
-        line = lines[i + where_x]
+        line = lines[i + where_y]
 
         # Ensure the line is long enough to receive `what`
-        if len(line) < where_y + max_length:
-            line = line.ljust(where_y + max_length)
+        if len(line) < where_x + max_length:
+            line = line.ljust(where_x + max_length)
 
         # Use slicing to insert the new content
-        line = line[:where_y] + what_lines[i] + line[where_y + len(what_lines[i]):]
-        lines[i + where_x] = line
+        line = line[:where_x] + what_lines[i] + line[where_x + len(what_lines[i]):]
+        lines[i + where_y] = line
 
     # Join the lines back into a full string
     new_on_where = '\n'.join(lines)
